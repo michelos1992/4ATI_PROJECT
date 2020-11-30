@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
+const db = require('./models');
+const PORT = process.env.PORT || 8080;
 
 var corsOption = {
     origin: 'http://localhost:8081'
@@ -14,7 +16,6 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({extended: true}));
 
-const db = require('./models');
 db.sequelize.sync({ force: true}).then(() => {
     console.log("Drop and re-sync db");
 });
@@ -25,7 +26,6 @@ app.get('/', (req, res) => {
 
 require('./routes/appCRUD.routes.js')(app);
 
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is runnig on port: ${PORT}.`);
 });

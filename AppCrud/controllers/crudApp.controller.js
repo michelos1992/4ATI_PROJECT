@@ -51,4 +51,64 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.update = (req, res) => {
+    const id = req.params.id;
 
+    appCrud.update(req.body, {
+        where: { id: id }
+    })
+    .then(num => {
+        if(num == 1) {
+            res.send ({
+                message: "App was update successfully"
+            });
+        }else {
+            res.send ({
+                message: `Cannot update app with id=${id}. Maybe app was not found or empty records`
+            });
+        }
+    })
+    .catch(err => {
+        res.status(500).send({
+            message: "Error updating app with id=" +id
+        });
+    });
+};
+
+exports.delete = (req, res) => {
+    const id = req.params.id;
+
+    appCrud.destroy({
+        where: { id: id }
+    }).then(num=> {
+        if(num == 1) {
+            res.send({
+                message: "App was deleted successfully!"
+            });
+        }else {
+            res.send({
+                message: `Cannot delete app with id=${id}.`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send ({
+            message: "Could not delete app with id " + id
+        });
+    });
+};
+
+exports.deleteAll = (req, res) => {
+    appCrud.destroy({
+        where: {},
+        truncate: false
+    }).then(nums=> {
+        res.send({
+            message: `${nums} App were deleted successfully!`
+        });        
+    }).catch(err => {
+        res.status(500).send ({
+            message:
+                err.message || "Some error occured while removing all records"
+        });
+    });
+}
